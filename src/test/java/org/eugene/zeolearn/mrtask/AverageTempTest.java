@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for simple AverageTempDriver.
+ * Unit test for simple AverageTempApplication.
  */
 public class AverageTempTest
     extends TestCase
