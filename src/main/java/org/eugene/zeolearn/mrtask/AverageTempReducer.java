@@ -16,18 +16,11 @@ public class AverageTempReducer extends Reducer<Text, IntWritable, Text, DoubleW
     public void reduce(Text key, Iterable<IntWritable> values, Context context)
             throws IOException, InterruptedException {
 
-//        Double avg = StreamSupport.stream(values.spliterator(), false)
-//                .mapToDouble(a -> a)
-//                .average();
+        Double avg = StreamSupport.stream(values.spliterator(), false)
+                .mapToDouble(IntWritable::get)
+                .average()
+                .getAsDouble();
 
-        int count = 0;
-        Double sumTemperature = 0D;
-
-        for (IntWritable x : values) {
-            sumTemperature += x.get();
-            count++;
-        }
-
-        context.write(key, new DoubleWritable(sumTemperature / count));
+        context.write(key, new DoubleWritable(avg));
     }
 }
