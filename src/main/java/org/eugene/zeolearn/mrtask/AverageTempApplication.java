@@ -4,6 +4,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 
 import org.apache.hadoop.mapreduce.Job;
@@ -44,6 +45,9 @@ public class AverageTempApplication  extends Configured implements Tool
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
+
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
 
         job.setJarByClass(AverageTempApplication.class);
 
