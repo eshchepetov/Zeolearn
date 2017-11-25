@@ -1,4 +1,8 @@
 -------------------------------
+scp -i ~eugene/.ssh/Eugene1.pem users hadoop@ec2-52-201-241-91.compute-1.amazonaws.com:~/users
+scp -i ~eugene/.ssh/Eugene1.pem comments hadoop@ec2-52-201-241-91.compute-1.amazonaws.com:~/comments
+
+-------------------------------
 create database eugene;
 OK
 Time taken: 1.701 seconds
@@ -61,4 +65,4 @@ Time taken: 10.031 seconds, Fetched: 1 row(s)
 hive>
 
 ----------------------------------
--- performance idea - buckets? partitions?
+-- performance idea - buckets?

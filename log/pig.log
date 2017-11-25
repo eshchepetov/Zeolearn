@@ -1,0 +1,37 @@
+------------------------------
+lines = LOAD 'words' AS (line:chararray);
+dump string
+words = FOREACH lines GENERATE FLATTEN(TOKENIZE(lines)) as word;
+grouped = GROUP words BY word;
+wordcount = FOREACH grouped GENERATE group, COUNT(words);
+dump wordcount;
+------------------------------
+
+lines = LOAD 'students' using PigStorage(',') AS (studentid:int,name:chararray,grade:int,disc:chararray);
+perstudent = GROUP lines by name;
+
+>> (student1,{(0,student1,10,eng),(0,student1,20,maths),(0,student1,30,bio)})
+>> (student2,{(1,student2,40,eng),(1,student2,50,bio),(1,student2,60,maths)})
+>> (student3,{(2,student3,70,eng),(2,student3,80,maths),(2,student3,90,bio)})
+
+result = foreach perstudent generate group as name, AVG(lines.grade) as average;
+
+>> (student1,20.0)
+>> (student2,50.0)
+>> (student3,80.0)
+
+-----------------------------
+
+This is not possible with Pig, nor does it make much sense for it to be. Remember that a relation is a bag of tuples, and by definition, a bag is not guaranteed to have its tuples in any specific order. You might start with
+
+(1, 2, 3, 4, 5)
+(6, 7, 8, 9, 10)
+(11, 12, 13, 14, 15)
+
+but from Pig's perspective there is no difference between this and
+
+(11, 12, 13, 14, 15)
+(1, 2, 3, 4, 5)
+(6, 7, 8, 9, 10)
+
+which means that "transpose" is ill-defined. Look at it this way -- if you transpose twice, you should end up with the same data structure back, but because the tuples can be reordered along the way, this is not guaranteed to happen.
