@@ -1,0 +1,64 @@
+-------------------------------
+create database eugene;
+OK
+Time taken: 1.701 seconds
+
+-------------------------------
+hive> CREATE TABLE IF NOT EXISTS eugene.users (userID int, userName String)
+    > COMMENT 'Users'
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ' '
+    > LINES TERMINATED BY '\n'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.424 seconds
+
+-------------------------------
+hive> CREATE TABLE IF NOT EXISTS eugene.comments (commentID int, commentDescription String, userID int)
+    > COMMENT 'Comments'
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ' '
+    > LINES TERMINATED BY '\n'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.086 seconds
+
+-------------------------------
+hadoop fs -put users users
+hadoop fs -put comments comments
+
+--------------------------------
+load data local inpath 'users' overwrite into table eugene.users;
+load data local inpath 'comments' overwrite into table eugene.comments;
+
+-- issue with '\t' delimiter --
+
+--------------------------------
+hive> select * from eugene.users;
+OK
+1 eugene
+2 sonali
+Time taken: 0.145 seconds, Fetched: 2 row(s)
+
+--------------------------------
+hive> select * from eugene.comments;
+OK
+1 Eugene1 1
+2 Sonali1 2
+3 Sonali2 2
+Time taken: 1.951 seconds, Fetched: 3 row(s)
+
+---------------------------------
+hive> select users.userName from eugene.users join eugene.comments on (users.userID=comments.userID) group by users.userName having count(users.userName) > 1;
+Query ID = hadoop_20171125013105_e9523c13-fc28-4b0c-aa13-3ac9b7f748a8
+Total jobs = 1
+Launching Job 1 out of 1
+Status: Running (Executing on YARN cluster with App id application_1511557707801_0010)
+
+OK
+sonali
+Time taken: 10.031 seconds, Fetched: 1 row(s)
+hive>
+
+----------------------------------
+-- performance idea - buckets? partitions?
